@@ -10,3 +10,6 @@ edition = "2018"
 rusb = ">=0.5.2"
 hidapi = ">=1.0.1"
 itertools = "*"
+
+[dev-dependencies]
+ctrlc = "*"
