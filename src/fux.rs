@@ -50,11 +50,10 @@ pub enum UsbTuxCommands {
     FlippersWave = 0x80,
     FlippersStop = 0x30,
 
-    /*
-    SPIN_LEFT_CMD = 0x83,
-    SPIN_RIGHT_CMD = 0x82,
-    SPIN_STOP_CMD = 0x37,
-    */
+    SpinLeft = 0x83,
+    SpinRight = 0x82,
+    SpinStop = 0x37,
+
     LedFadeSpeed = 0xD0,
     LedSet = 0xD1,
     LedPulseRange = 0xD2,
@@ -393,6 +392,21 @@ impl Fux {
         let ret = self.send_to_tux(&frame);
 
         true
+    }
+
+    pub fn spin_left(&self) -> bool
+    {
+        let frame: [u8; 4] = [UsbTuxCommands::SpinLeft as u8, 0, 5, 0];
+
+        match self.send_to_tux(&frame) {
+            Ok(_) => true,
+            Err(_) => false,
+        }
+    }
+
+    pub fn spin_stop(&self) -> bool
+    {
+        self.send_tux_simple_command(UsbTuxCommands::SpinStop)
     }
 }
 

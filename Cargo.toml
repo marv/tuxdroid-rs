@@ -9,6 +9,7 @@ edition = "2018"
 [dependencies]
 hidapi = ">=1.0.1"
 itertools = "*"
+modular-bitfield = "*"
 
 [dev-dependencies]
 ctrlc = "*"

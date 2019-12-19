@@ -1,17 +1,20 @@
+use modular_bitfield::prelude::*;
 
-/*
-struct PortBBits
+#[bitfield]
+#[derive(PartialEq, Eq, Debug)]
+pub struct PortBBits
 {
-    _BIT_ flippers_motor_backward:1;
-    _BIT_ spin_motor_forward:1;
-    _BIT_ spin_motor_backward:1;
-    _BIT_ mouth_open_switch:1;
-    _BIT_ mouth_closed_switch:1;
-    _BIT_ head_push_switch:1;
-    _BIT_ charger_inhibit_signal:1;
-    _BIT_ external_io:1;
+    flippers_motor_backward: bool,
+    spin_motor_forward: bool,
+    spin_motor_backward: bool,
+    mouth_open_switch: bool,
+    mouth_closed_switch: bool,
+    head_push_switch: bool,
+    charger_inhibit_signal: bool,
+    external_io: bool,
 }
 
+/*
 union
 {
     Byte: u8;
@@ -177,31 +180,32 @@ struct FrameBodySensors1
 
 struct FrameBodyLight
 {
-    high_level: u8;
-    low_level: u8;
-    mode: u8;
-};
+    high_level: u8,
+    low_level: u8,
+    mode: u8,
+}
 
 struct FrameBodyPosition1
 {
-    eyes_remaining_mvm: u8;
-    mouth_remaining_mvm: u8;
-    flippers_remaining_mvm: u8;
-};
+    eyes_remaining_mvm: u8,
+    mouth_remaining_mvm: u8,
+    flippers_remaining_mvm: u8,
+}
 
+/*
 struct FrameBodyPosition2
 {
-    spin_remaining_mvm: u8;
-    flippers_down: u8;
-    motors: MotorsState;
-};
+    spin_remaining_mvm: u8,
+    flippers_down: u8,
+    motors: MotorsState,
+}
 
 struct FrameBodyIR
 {
-    _RC5_BYTE_     rc5_code;
+    _RC5_BYTE_     rc5_code,
     /*unsigned char   ??;                       NDEF */
     /*unsigned char   ??;                       NDEF */
-};
+}
 
 struct FrameBodyId
 {
@@ -292,3 +296,4 @@ struct HardwareState
     led: frame_body_led_t;
     pong: frame_body_pong_t;
 };
+*/

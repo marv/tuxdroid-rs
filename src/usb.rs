@@ -3,6 +3,8 @@
 extern crate itertools;
 use itertools::Itertools;
 
+use crate::hardware;
+
 const FUX_VENDOR_ID: u16 = 0x03eb;
 const FUX_PRODUCT_ID: u16 = 0xff07;
 
@@ -29,7 +31,7 @@ fn process_usb_frame(data: &[u8], state: &mut ProcessState) -> Option<Vec<Vec<u8
     let packet_count = data[3];
 
     println!(
-        "ID frame: {}, RF state: {}, Packet count: {}",
+        "Frame ID: {}, RF state: {}, Packet count: {}",
         id_frame, rf_state, packet_count
     );
 
@@ -103,9 +105,9 @@ fn process_usb_frame(data: &[u8], state: &mut ProcessState) -> Option<Vec<Vec<u8
 
 pub fn read_frame(device: &hidapi::HidDevice) -> Option<Vec<u8>> {
     match device.write(&FRAME_STATUS_REQUEST) {
-        Ok(size) => {
+        Ok(_size) => (), /*{
             println!("Write successful, wrote {} bytes", size);
-        }
+        }*/
         Err(e) => {
             eprintln!("Error while writing: {}", e);
         }
@@ -116,12 +118,12 @@ pub fn read_frame(device: &hidapi::HidDevice) -> Option<Vec<u8>> {
 
     let mut buf = [0u8; TUX_RECEIVE_LENGTH];
     match device.read(&mut buf) {
-        Ok(size) => {
-            println!(
-                "Read successful, got {} bytes: {:02x}",
-                size,
-                buf.iter().format("")
-            );
+        Ok(_size) => {
+            // println!(
+            //     "Read successful, got {} bytes: {:02x}",
+            //     size,
+            //     buf.iter().format("")
+            // );
             Some(buf.to_vec())
         }
         Err(e) => {
@@ -155,12 +157,38 @@ PONG               0xFF
 fn process_packet(device: &hidapi::HidDevice, data: Vec<u8>) {
     match data[0] {
         0xC0 => {
-            println!("ports");
+            // println!(
+            //     "B: 0x{:02x}, C: 0x{:02x}, D: 0x{:02x}",
+            //     data[1], data[2], data[3]
+            // );
 
-            println!(
-                "B: 0x{:02x}, C: 0x{:02x}, D: 0x{:02x}",
-                data[1], data[2], data[3]
-            );
+            use std::convert::TryFrom as _;
+            let copy = hardware::PortBBits::try_from(&data[1..2]);
+            match copy {
+                Err(e) => eprintln!("error: {}", e),
+                Ok(c) => {
+                    println!("Port B");
+                    println!("  flippers_motor_backward: {}", c.get_flippers_motor_backward());
+                    println!("  spin_motor_forward: {}", c.get_spin_motor_forward());
+                    println!("  spin_motor_backward: {}", c.get_spin_motor_backward());
+                    println!("  mouth_open_switch: {}", c.get_mouth_open_switch());
+                    println!("  mouth_closed_switch: {}", c.get_mouth_closed_switch());
+                    println!("  head_push_switch: {}", c.get_head_push_switch());
+                    println!("  charger_inhibit_signal: {}", c.get_charger_inhibit_signal());
+                    println!("  external_io: {}", c.get_external_io());
+
+                    if c.get_head_push_switch() == false {
+                        println!("Head push button PRESSED!");
+                    }
+                }
+            }
+        }
+        0xC8 => {
+            println!("Version packet");
+            println!(" CPU: {}", (data[1] >> 5) & 0b0000_0111);
+            println!(" Major: {}", data[1] & 0b0001_1111);
+            println!(" Minor: {}", data[2]);
+            println!(" Update: {}", data[3]);
         }
         _ => println!("something else"),
     }

@@ -1,6 +1,11 @@
-extern crate hidapi;
-extern crate rusb;
+//! TuxDroid crate
+//!
+//!
+//!
 
+extern crate hidapi;
+
+pub mod hardware;
 pub mod fux;
 pub mod usb;
 pub mod tuxdroid;
