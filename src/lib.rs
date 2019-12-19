@@ -1,5 +1,4 @@
 extern crate hidapi;
-extern crate rusb;
 
 pub mod fux;
 pub mod usb;
